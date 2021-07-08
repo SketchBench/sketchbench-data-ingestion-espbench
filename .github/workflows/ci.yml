@@ -98,5 +98,5 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: sketchbench/sketchbench-tester
+          repository: sketchbench/sketchbench-${{ matrix.component }}
           short-description: ${{ matrix.description }}
