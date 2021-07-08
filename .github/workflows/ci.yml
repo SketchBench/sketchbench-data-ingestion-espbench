@@ -36,6 +36,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Prepare Docker metadata
         id: meta
         uses: docker/metadata-action@v3
