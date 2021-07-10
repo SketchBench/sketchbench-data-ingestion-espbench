@@ -28,20 +28,20 @@ jobs:
             latest: true
             description: Data ingestion of ESPBench data for SketchBench.
             file: Dockerfile
-          - component: data-ingestion-espbench-init
-            version: "0.1.0"
-            latest: true
-            description: Data set init container of ESPBench data for SketchBench.
-            file: init.dockerfile
+          # - component: data-ingestion-espbench-init
+          #   version: "0.1.0"
+          #   latest: true
+          #   description: Data set init container of ESPBench data for SketchBench.
+          #   file: init.dockerfile
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          lfs: true
-      - name: Checkout LFS objects
-        run: git lfs checkout
-      - name: Pull LFS objects
-        run: git lfs pull
+      #   with:
+      #     lfs: true
+      # - name: Checkout LFS objects
+      #   run: git lfs checkout
+      # - name: Pull LFS objects
+      #   run: git lfs pull
       - name: Prepare Docker metadata
         id: meta
         uses: docker/metadata-action@v3
