@@ -24,12 +24,12 @@ jobs:
       matrix:
         include:
           - component: data-ingestion-espbench
-            version: "0.1.0"
+            version: "0.1.1"
             latest: true
             description: Data ingestion of ESPBench data for SketchBench.
             file: Dockerfile
           # - component: data-ingestion-espbench-init
-          #   version: "0.1.0"
+          #   version: "0.1.1"
           #   latest: true
           #   description: Data set init container of ESPBench data for SketchBench.
           #   file: init.dockerfile
