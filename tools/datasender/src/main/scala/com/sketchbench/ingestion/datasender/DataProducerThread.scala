@@ -1,9 +1,11 @@
 package com.sketchbench.ingestion.datasender
 
 import java.util.concurrent.TimeUnit
-
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import com.sketchbench.ingestion.commons.util.Logging
+import net.liftweb.json.DefaultFormats
+import net.liftweb.json.Extraction.decompose
+import net.liftweb.json.JsonAST.compactRender
 
 class DataProducerThread(dataProducer: DataProducer,
                          val dataReader: DataReader,
@@ -42,17 +44,35 @@ class DataProducerThread(dataProducer: DataProducer,
 
   def send(message: String): Unit = {
     val msgArray = message.split("\\s")
-    val msgTmp = "\"ts\":" + msgArray(0) + "\",\"index\":" + msgArray(1).toInt + ",\"mf01\":" + msgArray(2).toInt + ",\"mf02\":" + msgArray(3).toInt + ",\"mf03\":" + msgArray(4).toInt +",\"pc13\":" + msgArray(5).toInt + ",\"pc14\":" + msgArray(6).toInt + ",\"pc15\":" + msgArray(7).toInt + ",\"pc25\":" + msgArray(8).toInt + ",\"pc26\":" + msgArray(9).toInt + ",\"pc27\":" + msgArray(10).toInt + ",\"res\":" + msgArray(11).toInt+""
-    sendToKafka(topic, msgTmp)
+    val payload = Map(
+      "messageID" -> getNextMessageId(topic),
+      "ts" -> msgArray(0),
+      "index" -> msgArray(1).toLong,
+      "mf01" -> msgArray(2).toInt,
+      "mf02" -> msgArray(3).toInt,
+      "mf03" -> msgArray(4).toInt,
+      "pc13" -> msgArray(5).toInt,
+      "pc14" -> msgArray(6).toInt,
+      "pc15" -> msgArray(7).toInt,
+      "pc25" -> msgArray(8).toInt,
+      "pc26" -> msgArray(9).toInt,
+      "pc27" -> msgArray(10).toInt,
+      "res" -> msgArray(11).toInt,
+      "mf01" -> msgArray(2).toInt,
+      "mf01" -> msgArray(2).toInt
+    )
+    sendToKafka(topic, createJsonString(payload))
+  }
+  def createJsonString(message: Map[String, Any]): String = {
+    implicit val formats = DefaultFormats
+    val jsonString = compactRender(decompose(message))
+    jsonString
   }
 
   def sendToKafka(topic: String, message: String): Unit = {
-    var messageID = getNextMessageId(topic)
-    //val msgWithIdAndTs = "{\"" + messageID +"\":{" + message + "}}"
-    val msgWithIdAndTs = "{\"messageID\":" + messageID.toInt +"," + message + "}"
-    val record = new ProducerRecord[String, String](topic, msgWithIdAndTs)
+    val record = new ProducerRecord[String, String](topic, message)
     dataProducer.getKafkaProducer.send(record)
-    logger.debug(s"Sent value $msgWithIdAndTs to topic $topic.")
+    logger.debug(s"Sent value $message to topic $topic.")
   }
 }
 
